@@ -37,10 +37,24 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM base AS production
+FROM node:20.19.3-alpine AS production
 
-# Copy production dependencies from base stage
-COPY --from=base /app/node_modules ./node_modules
+# Install system dependencies required for runtime and native modules
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    bash \
+    curl
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json ./
+
+# Install production dependencies only
+RUN npm ci --omit=dev && npm cache clean --force
 
 # Copy built frontend from build stage
 COPY --from=build /app/dist ./dist
@@ -74,5 +88,5 @@ EXPOSE 3008
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:3008/api/auth/status || exit 1
 
-# Start the application
-CMD ["npm", "run", "start"]
+# Start the application (server only, build is already done)
+CMD ["npm", "run", "server"]
