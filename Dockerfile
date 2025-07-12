@@ -15,14 +15,17 @@ RUN apk add --no-cache \
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package files (both package.json and package-lock.json)
+COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Install dependencies using npm ci for reproducible builds
+RUN npm ci --omit=dev && npm cache clean --force
 
 # Build stage for frontend
 FROM base AS build
+
+# Copy package files for build stage
+COPY package.json package-lock.json ./
 
 # Install all dependencies including dev dependencies for building
 RUN npm ci
