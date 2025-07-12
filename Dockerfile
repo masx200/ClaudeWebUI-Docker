@@ -46,10 +46,13 @@ COPY --from=build /app/dist ./dist
 COPY server ./server
 COPY public ./public
 COPY package*.json ./
-COPY .env.example ./.env
+COPY .env.example ./
 
 # Create directory for SQLite database
 RUN mkdir -p /app/data
+
+# Create default .env file for Docker deployment
+RUN echo "PORT=3008\nNODE_ENV=production\nDB_PATH=/app/data/auth.db\nHOME=/opt/docker" > .env
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
