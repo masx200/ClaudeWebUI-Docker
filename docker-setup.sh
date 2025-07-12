@@ -14,8 +14,8 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-if ! command -v docker-compose &> /dev/null; then
-    echo "❌ Docker Compose is not installed. Please install Docker Compose first."
+if ! docker compose version &> /dev/null; then
+    echo "❌ Docker Compose is not available. Please install Docker Compose plugin."
     exit 1
 fi
 
@@ -45,17 +45,17 @@ fi
 
 # Build and start the container
 echo "🏗️  Building Claude Code UI container..."
-docker-compose build
+docker compose build
 
 echo "🚀 Starting Claude Code UI..."
-docker-compose up -d
+docker compose up -d
 
 # Wait for the service to be healthy
 echo "⏳ Waiting for service to be ready..."
 sleep 10
 
 # Check if the service is running
-if docker-compose ps | grep -q "Up"; then
+if docker compose ps | grep -q "Up"; then
     echo "✅ Claude Code UI is running successfully!"
     echo ""
     echo "📋 Service Information:"
@@ -68,12 +68,12 @@ if docker-compose ps | grep -q "Up"; then
     echo "   URL: http://claudecodeui:3008"
     echo ""
     echo "📊 To check status:"
-    echo "   docker-compose logs -f claudecodeui"
+    echo "   docker compose logs -f claudecodeui"
     echo ""
     echo "🛑 To stop:"
-    echo "   docker-compose down"
+    echo "   docker compose down"
 else
     echo "❌ Service failed to start. Check logs:"
-    docker-compose logs claudecodeui
+    docker compose logs claudecodeui
     exit 1
 fi

@@ -40,13 +40,13 @@ sed -i "s/your-super-secure-jwt-secret-change-this-in-production/$JWT_SECRET/" .
 
 ```bash
 # Build the container
-docker-compose build
+docker compose build
 
 # Start the service
-docker-compose up -d
+docker compose up -d
 
 # Check status
-docker-compose logs -f claudecodeui
+docker compose logs -f claudecodeui
 ```
 
 ## Configuration
@@ -123,10 +123,10 @@ services:
 
 ```bash
 # Check service status
-docker-compose ps
+docker compose ps
 
 # View logs
-docker-compose logs -f claudecodeui
+docker compose logs -f claudecodeui
 
 # Monitor resource usage
 docker stats claudecodeui
@@ -136,12 +136,12 @@ docker stats claudecodeui
 
 ```bash
 # Restart the service
-docker-compose restart claudecodeui
+docker compose restart claudecodeui
 
 # Update the application
 git pull
-docker-compose build
-docker-compose up -d
+docker compose build
+docker compose up -d
 
 # Backup database
 docker cp claudecodeui:/app/data/auth.db ./auth-backup-$(date +%Y%m%d).db
@@ -153,7 +153,7 @@ docker cp claudecodeui:/app/data/auth.db ./auth-backup-$(date +%Y%m%d).db
 
 ```bash
 # Check logs for errors
-docker-compose logs claudecodeui
+docker compose logs claudecodeui
 
 # Verify network exists
 docker network ls | grep shared_net
@@ -166,9 +166,9 @@ df -h
 
 ```bash
 # Reset authentication database
-docker-compose down
+docker compose down
 docker volume rm claudecodeui_claudecodeui_data
-docker-compose up -d
+docker compose up -d
 ```
 
 #### File Access Problems
@@ -211,7 +211,7 @@ The containerized Claude Code UI integrates seamlessly with:
 ## Support
 
 For issues specific to the Docker deployment:
-1. Check the container logs: `docker-compose logs claudecodeui`
+1. Check the container logs: `docker compose logs claudecodeui`
 2. Verify network connectivity: `docker network inspect shared_net`
 3. Test file access: `docker exec claudecodeui ls -la /opt/docker`
 
