@@ -171,11 +171,64 @@ async function extractProjectDirectory(projectName) {
   }
 }
 
+// Discover available directories in /opt/docker that could become Claude projects
+async function getAvailableDirectories() {
+  const dockerDir = '/opt/docker';
+  const availableDirectories = [];
+  
+  try {
+    const entries = await fs.readdir(dockerDir, { withFileTypes: true });
+    
+    for (const entry of entries) {
+      if (entry.isDirectory() && !entry.name.startsWith('.')) {
+        const dirPath = path.join(dockerDir, entry.name);
+        
+        // Check if it's already a Claude project
+        const projectName = entry.name.replace(/\//g, '-');
+        const claudeProjectPath = path.join(process.env.HOME, '.claude', 'projects', projectName);
+        const isClaudeProject = fsSync.existsSync(claudeProjectPath);
+        
+        // Get basic info about the directory
+        try {
+          const stats = await fs.stat(dirPath);
+          const files = await fs.readdir(dirPath);
+          
+          availableDirectories.push({
+            name: entry.name,
+            path: dirPath,
+            isClaudeProject,
+            projectName,
+            fileCount: files.length,
+            lastModified: stats.mtime,
+            hasPackageJson: files.includes('package.json'),
+            hasGit: files.includes('.git'),
+            hasDockerfile: files.includes('Dockerfile') || files.includes('docker-compose.yml')
+          });
+        } catch (error) {
+          console.warn(`Could not read directory ${dirPath}:`, error.message);
+        }
+      }
+    }
+    
+    return availableDirectories.sort((a, b) => a.name.localeCompare(b.name));
+  } catch (error) {
+    console.error('Error reading /opt/docker directory:', error);
+    return [];
+  }
+}
+
 async function getProjects() {
   const claudeDir = path.join(process.env.HOME, '.claude', 'projects');
   const config = await loadProjectConfig();
   const projects = [];
   const existingProjects = new Set();
+  
+  // Ensure .claude/projects directory exists
+  try {
+    await fs.mkdir(claudeDir, { recursive: true });
+  } catch (error) {
+    // Directory already exists or permission error
+  }
   
   try {
     // First, get existing projects from the file system
@@ -601,6 +654,82 @@ async function addProjectManually(projectPath, displayName = null) {
   };
 }
 
+// Initialize a Claude project from an existing directory
+async function initializeClaudeProject(directoryPath, displayName = null) {
+  const { spawn } = await import('child_process');
+  const absolutePath = path.resolve(directoryPath);
+  
+  try {
+    // Check if the path exists
+    await fs.access(absolutePath);
+  } catch (error) {
+    throw new Error(`Directory does not exist: ${absolutePath}`);
+  }
+  
+  // Generate project name
+  const dirName = path.basename(absolutePath);
+  const projectName = dirName.replace(/\//g, '-');
+  
+  // Check if project already exists
+  const claudeDir = path.join(process.env.HOME, '.claude', 'projects');
+  const projectDir = path.join(claudeDir, projectName);
+  
+  if (fsSync.existsSync(projectDir)) {
+    throw new Error(`Claude project '${projectName}' already exists`);
+  }
+  
+  return new Promise((resolve, reject) => {
+    // Run claude command to initialize project in the directory
+    const claudeProcess = spawn('claude', ['--cwd', absolutePath], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+      env: { ...process.env }
+    });
+    
+    let output = '';
+    let errorOutput = '';
+    
+    claudeProcess.stdout.on('data', (data) => {
+      output += data.toString();
+    });
+    
+    claudeProcess.stderr.on('data', (data) => {
+      errorOutput += data.toString();
+    });
+    
+    claudeProcess.on('close', async (code) => {
+      if (code === 0) {
+        try {
+          // Add display name to config if provided
+          if (displayName) {
+            const config = await loadProjectConfig();
+            config[projectName] = { displayName };
+            await saveProjectConfig(config);
+          }
+          
+          resolve({
+            name: projectName,
+            path: absolutePath,
+            displayName: displayName || dirName,
+            initialized: true
+          });
+        } catch (configError) {
+          reject(new Error(`Project initialized but config update failed: ${configError.message}`));
+        }
+      } else {
+        reject(new Error(`Failed to initialize Claude project: ${errorOutput || 'Unknown error'}`));
+      }
+    });
+    
+    claudeProcess.on('error', (error) => {
+      reject(new Error(`Failed to spawn claude command: ${error.message}`));
+    });
+    
+    // Send a simple command to create the project
+    claudeProcess.stdin.write('exit\n');
+    claudeProcess.stdin.end();
+  });
+}
+
 
 export {
   getProjects,
@@ -615,5 +744,7 @@ export {
   loadProjectConfig,
   saveProjectConfig,
   extractProjectDirectory,
-  clearProjectDirectoryCache
+  clearProjectDirectoryCache,
+  getAvailableDirectories,
+  initializeClaudeProject
 };

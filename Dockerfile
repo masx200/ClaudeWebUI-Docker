@@ -45,7 +45,18 @@ RUN apk add --no-cache \
     make \
     g++ \
     bash \
-    curl
+    curl \
+    git
+
+# Install Claude CLI globally
+RUN npm install -g @anthropic-ai/claude-code
+
+# Install SuperClaude framework
+RUN cd /tmp && \
+    git clone https://github.com/NomenAK/SuperClaude.git && \
+    cd SuperClaude && \
+    echo "y" | ./install.sh && \
+    rm -rf /tmp/SuperClaude
 
 # Set working directory
 WORKDIR /app

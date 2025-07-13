@@ -36,7 +36,7 @@ import pty from 'node-pty';
 import fetch from 'node-fetch';
 import mime from 'mime-types';
 
-import { getProjects, getSessions, getSessionMessages, renameProject, deleteSession, deleteProject, addProjectManually, extractProjectDirectory, clearProjectDirectoryCache } from './projects.js';
+import { getProjects, getSessions, getSessionMessages, renameProject, deleteSession, deleteProject, addProjectManually, extractProjectDirectory, clearProjectDirectoryCache, getAvailableDirectories, initializeClaudeProject } from './projects.js';
 import { spawnClaude, abortClaudeSession } from './claude-cli.js';
 import gitRoutes from './routes/git.js';
 import authRoutes from './routes/auth.js';
@@ -277,6 +277,34 @@ app.post('/api/projects/create', authenticateToken, async (req, res) => {
     res.json({ success: true, project });
   } catch (error) {
     console.error('Error creating project:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get available directories in /opt/docker that can become Claude projects
+app.get('/api/available-directories', authenticateToken, async (req, res) => {
+  try {
+    const directories = await getAvailableDirectories();
+    res.json({ success: true, directories });
+  } catch (error) {
+    console.error('Error getting available directories:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Initialize a Claude project from an existing directory
+app.post('/api/projects/initialize', authenticateToken, async (req, res) => {
+  try {
+    const { directoryPath, displayName } = req.body;
+    
+    if (!directoryPath || !directoryPath.trim()) {
+      return res.status(400).json({ error: 'Directory path is required' });
+    }
+    
+    const project = await initializeClaudeProject(directoryPath.trim(), displayName?.trim());
+    res.json({ success: true, project });
+  } catch (error) {
+    console.error('Error initializing Claude project:', error);
     res.status(500).json({ error: error.message });
   }
 });
