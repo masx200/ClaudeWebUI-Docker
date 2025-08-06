@@ -11,7 +11,7 @@ run cnpm i -g --force npm cnpm yarn
 run sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 
 # Install system dependencies required for the application
-RUN apk add  nano sudo  --no-cache \
+RUN apk add   sudo  --no-cache \
     python3 py3-pip\
     make \
     g++ \
