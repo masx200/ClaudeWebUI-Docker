@@ -2,6 +2,14 @@
 
 Docker容器化的Claude Web UI应用
 
+## docker deployment
+
+```bash
+docker pull "registry.cn-hangzhou.aliyuncs.com/masx200/claudewebui:1.5.0"
+```
+
+# claudecodeui
+
 <div align="center">
   <img src="public/logo.svg" alt="Claude Code UI" width="64" height="64">
   <h1>Claude Code UI</h1>
