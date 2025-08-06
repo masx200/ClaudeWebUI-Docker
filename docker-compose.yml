@@ -5,44 +5,44 @@ services:
       dockerfile: Dockerfile
     container_name: claudecodeui
     restart: unless-stopped
-    
+
     environment:
       # Server configuration
       - PORT=3008
       - NODE_ENV=production
-      
+
       # JWT Security (generate a secure secret)
       - JWT_SECRET=${JWT_SECRET:-your-super-secure-jwt-secret-change-this-in-production}
-      
+
       # Optional API key for additional security
       - API_KEY=${API_KEY:-}
-      
+
       # Database configuration
       - DB_PATH=/app/data/auth.db
-      
+
       # Claude CLI configuration
       - HOME=/opt/docker
-      
+
     volumes:
       # Mount the entire /opt/docker directory for file access
       - /opt/docker:/opt/docker:rw
-      
+
       # Persistent storage for SQLite database
       - claudecodeui_data:/app/data
-      
+
       # Mount git configuration if available
       - /opt/docker/.gitconfig:/home/nodejs/.gitconfig:ro
-      
+
     working_dir: /app
-    
+
     # No ports exposed to localhost - only accessible via Docker network
     networks:
       - shared_net
-    
+
     # Ensure the container can access git and other CLI tools
     cap_add:
       - SYS_PTRACE
-    
+
     # Health check
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3008/api/auth/status"]

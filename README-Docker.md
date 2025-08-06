@@ -1,6 +1,8 @@
 # Claude Code UI - Docker Deployment
 
-This guide covers deploying Claude Code UI in a Docker container connected to the `shared_net` network with secure authentication and access to the `/opt/docker` directory.
+This guide covers deploying Claude Code UI in a Docker container connected to
+the `shared_net` network with secure authentication and access to the
+`/opt/docker` directory.
 
 ## Quick Start
 
@@ -191,18 +193,15 @@ docker exec claudecodeui ls -la /opt/docker
 
 ## Features Available in Docker
 
-✅ **Full Claude Code UI functionality**
-✅ **Access to all projects in `/opt/docker`**
-✅ **WebSocket real-time communication**
-✅ **File editing and management**
-✅ **Git operations**
-✅ **Terminal integration**
-✅ **Progressive Web App features**
-✅ **Mobile responsive interface**
+✅ **Full Claude Code UI functionality** ✅ **Access to all projects in
+`/opt/docker`** ✅ **WebSocket real-time communication** ✅ **File editing and
+management** ✅ **Git operations** ✅ **Terminal integration** ✅ **Progressive
+Web App features** ✅ **Mobile responsive interface**
 
 ## Integration with Existing Services
 
 The containerized Claude Code UI integrates seamlessly with:
+
 - **Nginx Proxy Manager** - For SSL termination and routing
 - **N8N Workflows** - For automation integration
 - **Other Docker services** - Via shared_net network
@@ -211,6 +210,7 @@ The containerized Claude Code UI integrates seamlessly with:
 ## Support
 
 For issues specific to the Docker deployment:
+
 1. Check the container logs: `docker compose logs claudecodeui`
 2. Verify network connectivity: `docker network inspect shared_net`
 3. Test file access: `docker exec claudecodeui ls -la /opt/docker`
