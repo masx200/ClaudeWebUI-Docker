@@ -1,5 +1,5 @@
 # Multi-stage build for Claude Code UI Docker deployment
-FROM docker.cnb.cool/masx200/docker_mirror/node:20.19.3-alpine AS base
+FROM docker.cnb.cool/masx200/docker_mirror/node:22-alpine-linux-amd64 AS base
 
 
 
@@ -77,7 +77,7 @@ RUN yarn install --force
 RUN npm run build
 
 # Production stage
-FROM docker.cnb.cool/masx200/docker_mirror/node:20.19.3-alpine AS production
+FROM docker.cnb.cool/masx200/docker_mirror/node:22-alpine-linux-amd64 AS production
 
 
 
