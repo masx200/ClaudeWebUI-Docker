@@ -34,7 +34,7 @@ run pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 run set -e && \
   tmp_dir="/tmp/claudecodeui-main" && \
   wget -qO /tmp/claudecodeui.zip "https://bgithub.xyz/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
-  unzip -q /tmp/claudecodeui.zip -d /tmp && \
+  unzip  -o -q /tmp/claudecodeui.zip -d /tmp && \
   rm -f /tmp/claudecodeui.zip && \
   mkdir -v -p /app && \
   cp -a "$tmp_dir"/. /app && \
@@ -67,7 +67,7 @@ COPY . .
 run set -e && \
   tmp_dir="/tmp/claudecodeui-main" && \
   wget -qO /tmp/claudecodeui.zip "https://bgithub.xyz/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
-  unzip -q /tmp/claudecodeui.zip -d /tmp && \
+  unzip  -o -q /tmp/claudecodeui.zip -d /tmp && \
   rm -f /tmp/claudecodeui.zip && \
   mkdir -v -p /app && \
   cp -a "$tmp_dir"/. /app && \
@@ -123,7 +123,7 @@ run pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 run set -e && \
   tmp_dir="/tmp/claudecodeui-main" && \
   wget -qO /tmp/claudecodeui.zip "https://bgithub.xyz/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
-  unzip -q /tmp/claudecodeui.zip -d /tmp && \
+  unzip  -o -q /tmp/claudecodeui.zip -d /tmp && \
   rm -f /tmp/claudecodeui.zip && \
   mkdir -v -p /app && \
   cp -a "$tmp_dir"/. /app && \
@@ -144,7 +144,7 @@ COPY .env.example ./
 run set -e && \
   tmp_dir="/tmp/claudecodeui-main" && \
   wget -qO /tmp/claudecodeui.zip "https://bgithub.xyz/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
-  unzip -q /tmp/claudecodeui.zip -d /tmp && \
+  unzip  -o  -q /tmp/claudecodeui.zip -d /tmp && \
   rm -f /tmp/claudecodeui.zip && \
   mkdir -v -p /app && \
   cp -a "$tmp_dir"/. /app && \
