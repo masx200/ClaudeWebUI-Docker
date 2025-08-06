@@ -5,13 +5,13 @@ FROM docker.cnb.cool/masx200/docker_mirror/node:20.19.3-alpine AS base
 
 run npm install -g cnpm --registry=https://registry.npmmirror.com
 run npm config set registry https://registry.npmmirror.com
-run cnpm i -g --force npm cnpm
+run cnpm i -g --force npm cnpm yarn
 
 
 run sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 
 # Install system dependencies required for the application
-RUN apk add --no-cache \
+RUN apk add  nano sudo  --no-cache \
     python3 py3-pip\
     make \
     g++ \
@@ -31,8 +31,17 @@ COPY package.json package-lock.json ./
 run pip config set install.trusted-host 'https://pypi.tuna.tsinghua.edu.cn'
 run pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
-# Install dependencies using npm ci for reproducible builds
-RUN cnpm ci --omit=dev --detial && npm cache clean --force
+run set -e && \
+  tmp_dir="/tmp/claudecodeui-main" && \
+  wget -qO /tmp/claudecodeui.zip "https://bgithub.xyz/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
+  unzip -q /tmp/claudecodeui.zip -d /tmp && \
+  rm -f /tmp/claudecodeui.zip && \
+  mkdir -v -p /app && \
+  cp -a "$tmp_dir"/. /app && \
+  echo "Done: files copied to /app"
+
+# Install dependencies using yarn install --force for reproducible builds
+RUN yarn install --force --omit=dev --detial && npm cache clean --force
 
 # Build stage for frontend
 FROM base AS build
@@ -41,7 +50,7 @@ FROM base AS build
 
 run npm install -g cnpm --registry=https://registry.npmmirror.com
 run npm config set registry https://registry.npmmirror.com
-run cnpm i -g --force npm cnpm
+run cnpm i -g --force npm cnpm yarn
 
 
 
@@ -51,11 +60,19 @@ run sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositorie
 COPY package.json package-lock.json ./
 
 # Install all dependencies including dev dependencies for building
-RUN npm ci
+RUN yarn install --force
 
 # Copy source code
 COPY . .
-
+run set -e && \
+  tmp_dir="/tmp/claudecodeui-main" && \
+  wget -qO /tmp/claudecodeui.zip "https://bgithub.xyz/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
+  unzip -q /tmp/claudecodeui.zip -d /tmp && \
+  rm -f /tmp/claudecodeui.zip && \
+  mkdir -v -p /app && \
+  cp -a "$tmp_dir"/. /app && \
+  echo "Done: files copied to /app"
+RUN yarn install --force
 # Build the frontend
 RUN npm run build
 
@@ -67,14 +84,14 @@ FROM docker.cnb.cool/masx200/docker_mirror/node:20.19.3-alpine AS production
 
 run npm install -g cnpm --registry=https://registry.npmmirror.com
 run npm config set registry https://registry.npmmirror.com
-run cnpm i -g --force npm cnpm
+run cnpm i -g --force npm cnpm yarn
 
 
 
 run sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 
 # Install system dependencies required for runtime and native modules
-RUN apk add --no-cache \
+RUN apk add  nano sudo  --no-cache \
     python3 py3-pip\
     make \
     g++ \
@@ -103,8 +120,17 @@ run pip config set install.trusted-host 'https://pypi.tuna.tsinghua.edu.cn'
 run pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 
+run set -e && \
+  tmp_dir="/tmp/claudecodeui-main" && \
+  wget -qO /tmp/claudecodeui.zip "https://bgithub.xyz/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
+  unzip -q /tmp/claudecodeui.zip -d /tmp && \
+  rm -f /tmp/claudecodeui.zip && \
+  mkdir -v -p /app && \
+  cp -a "$tmp_dir"/. /app && \
+  echo "Done: files copied to /app"
+RUN yarn install --force
 # Install production dependencies only
-RUN npm ci --detail --omit=dev && npm cache clean --force
+RUN yarn install --force --detail --omit=dev && npm cache clean --force
 
 # Copy built frontend from build stage
 COPY --from=build /app/dist ./dist
@@ -115,6 +141,15 @@ COPY public ./public
 COPY package*.json ./
 COPY .env.example ./
 
+run set -e && \
+  tmp_dir="/tmp/claudecodeui-main" && \
+  wget -qO /tmp/claudecodeui.zip "https://bgithub.xyz/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
+  unzip -q /tmp/claudecodeui.zip -d /tmp && \
+  rm -f /tmp/claudecodeui.zip && \
+  mkdir -v -p /app && \
+  cp -a "$tmp_dir"/. /app && \
+  echo "Done: files copied to /app"
+RUN yarn install --force
 # Create directory for SQLite database
 RUN mkdir -p /app/data
 
