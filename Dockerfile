@@ -175,3 +175,6 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 # Start the application (server only, build is already done)
 CMD ["npm", "run", "server"]
+
+
+run rm -frv "/tmp/claudecodeui-main"
