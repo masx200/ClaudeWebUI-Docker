@@ -31,7 +31,7 @@ jobs:
 
           sudo apt install dos2unix -y
           sudo apt clean
-      - run: docker build -f dockerfile -t masx200/claude-web-ui:2025-08-12-06-11-08 .
+      - run: docker build -f Dockerfile -t masx200/claude-web-ui:2025-08-12-06-11-08 .
       - run: mkdir -p ./dist
       - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock registry.cn-hangzhou.aliyuncs.com/masx200/docker-squash:1.2.2 docker-squash -v  -t masx200/claude-web-ui:${{ github.sha }} masx200/claude-web-ui:2025-08-12-06-11-08
       - run: docker images
