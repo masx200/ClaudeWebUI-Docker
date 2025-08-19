@@ -1,0 +1,48 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          # cache: "npm"
+      - run: npm i --force
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - run: |
+          sudo apt update
+          sudo apt install -y sudo
+      - run: sudo apt update
+      - name: Build the Docker image
+        run: |
+
+          sudo apt install dos2unix -y
+          sudo apt clean
+      - run: docker build -f dockerfile -t masx200/claude-web-ui:2025-08-12-06-11-08 .
+      - run: mkdir -p ./dist
+      - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock registry.cn-hangzhou.aliyuncs.com/masx200/docker-squash:1.2.2 docker-squash -v  -t masx200/claude-web-ui:${{ github.sha }} masx200/claude-web-ui:2025-08-12-06-11-08
+      - run: docker images
+      - name: Build and save
+        run: docker save masx200/claude-web-ui:${{ github.sha }} | gzip > ./dist/masx200-claude-web-ui-latest-image.tgz
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/heads/main')
+        with:
+          tag_name: Continuous-integration-${{ github.sha }}
+          #token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          files: |
+            ./dist/*.tgz
