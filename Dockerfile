@@ -33,7 +33,7 @@ run pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 run set -e && \
   tmp_dir="/tmp/claudecodeui-main" && \
-  wget -qO /tmp/claudecodeui.zip "https://bgithub.xyz/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
+  wget -qO /tmp/claudecodeui.zip "https://github.com/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
   unzip  -o -q /tmp/claudecodeui.zip -d /tmp && \
   rm -f /tmp/claudecodeui.zip && \
   mkdir -v -p /app && \
@@ -66,7 +66,7 @@ RUN yarn install --force
 COPY . .
 run set -e && \
   tmp_dir="/tmp/claudecodeui-main" && \
-  wget -qO /tmp/claudecodeui.zip "https://bgithub.xyz/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
+  wget -qO /tmp/claudecodeui.zip "https://github.com/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
   unzip  -o -q /tmp/claudecodeui.zip -d /tmp && \
   rm -f /tmp/claudecodeui.zip && \
   mkdir -v -p /app && \
@@ -104,7 +104,7 @@ RUN npm install -g @anthropic-ai/claude-code
 
 # Install SuperClaude framework
 RUN cd /tmp && \
-    git clone https://bgithub.xyz/NomenAK/SuperClaude.git && \
+    git clone https://github.com/NomenAK/SuperClaude.git && \
     cd SuperClaude && git checkout SuperClaude-v2 && \
     echo "y" | ./install.sh && \
     rm -rf /tmp/SuperClaude
@@ -122,7 +122,7 @@ run pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 run set -e && \
   tmp_dir="/tmp/claudecodeui-main" && \
-  wget -qO /tmp/claudecodeui.zip "https://bgithub.xyz/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
+  wget -qO /tmp/claudecodeui.zip "https://github.com/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
   unzip  -o -q /tmp/claudecodeui.zip -d /tmp && \
   rm -f /tmp/claudecodeui.zip && \
   mkdir -v -p /app && \
@@ -143,7 +143,7 @@ COPY .env.example ./
 
 run set -e && \
   tmp_dir="/tmp/claudecodeui-main" && \
-  wget -qO /tmp/claudecodeui.zip "https://bgithub.xyz/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
+  wget -qO /tmp/claudecodeui.zip "https://github.com/siteboon/claudecodeui/archive/refs/heads/main.zip" && \
   unzip  -o  -q /tmp/claudecodeui.zip -d /tmp && \
   rm -f /tmp/claudecodeui.zip && \
   mkdir -v -p /app && \
