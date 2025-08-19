@@ -152,7 +152,7 @@ run set -e && \
 RUN yarn install --force
 # Create directory for SQLite database
 RUN mkdir -p /app/data
-
+RUN npm run build
 # Create default .env file for Docker deployment
 RUN echo "PORT=3008\nNODE_ENV=production\nDB_PATH=/app/data/auth.db\nHOME=/opt/docker" > .env
 
@@ -164,7 +164,7 @@ RUN addgroup -g 1001 -S nodejs && \
 RUN chown -R nodejs:nodejs /app
 
 # Switch to non-root user
-USER nodejs
+USER root
 
 # Expose port internally (not to host)
 EXPOSE 3008
